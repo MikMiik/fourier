@@ -5,10 +5,15 @@ let slider;
 
 function setup() {
   let ctx = createCanvas(1120, screen.height);
-  slider = createSlider(1, 10, 3, 1);
+  slider = createSlider(0, 10, 3, 1);
   slider.class('ctx-slider')
-  let container = select('.container'); 
-  slider.parent(container);
+  slider.parent('container')
+  sliderValueDisplay = select('#slider-value')
+  updateValue()
+  slider.input(updateValue)
+}
+function updateValue() {
+  sliderValueDisplay.html(`Giá trị n : ${2*slider.value() + 1}`);
 }
 
 let wave = [];
@@ -21,7 +26,7 @@ function draw() {
   let x = 0;
   let y = 0;
   let theta = frameCount * 0.04;
-  for (let i = 0; i < slider.value(); i++) {
+  for (let i = 0; i <= slider.value(); i++) {
     let n = 2*i + 1;
     let radius = 100*(4/(n*PI));
 

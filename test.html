@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="/mathquill-0.10.1/mathquill.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.9.0/math.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+  <script src="/mathquill-0.10.1/mathquill.js"></script>
+</head>
+<body>
+
+    <p>Nhập công thức toán học:</p>
+    <div id="math-input"></div>
+    <button onclick="calculate()">Tính toán</button>
+
+    <p>Kết quả: <span id="result">...</span></p>
+
+    <script>
+        var MQ = MathQuill.getInterface(2);
+        var mathFieldSpan = document.getElementById('math-input');
+        var mathField = MQ.MathField(mathFieldSpan, {
+            spaceBehavesLikeTab: true
+        });
+
+        function calculate() {
+            var latex = mathField.latex(); // Lấy công thức dưới dạng LaTeX
+            try {
+                var expression = latex
+                    .replace(/\\frac{([^}]*)}{([^}]*)}/g, '($1)/($2)') // Phân số
+                    .replace(/\\cdot/g, '*') // Nhân
+                    .replace(/\\sqrt{([^}]*)}/g, 'sqrt($1)') // Căn bậc hai
+                    .replace(/\\left/g, '').replace(/\\right/g, '') // Loại bỏ \left \right
+                    .replace(/\\pi/g, 'pi') // Pi
+                    .replace(/\\times/g, '*') // Nhân (×)
+                    .replace(/\\div/g, '/') // Chia (÷)
+                    .replace(/([0-9])\s*([a-zA-Z\(])/g, '$1*$2') // 2x → 2*x
+                    .replace(/\\sum_{([a-zA-Z])=([^}]*)}^{([^}]*)} (.*)/g, 'math.sum(($1) => $4, $2, $3)') // Tổng Sigma
+                    .replace(/\\prod_{([a-zA-Z])=([^}]*)}^{([^}]*)} (.*)/g, 'math.prod(($1) => $4, $2, $3)'); // Tích Pi
+                var result = math.evaluate(expression);
+                document.getElementById('result').innerText = result;
+            } catch (error) {
+                document.getElementById('result').innerText = "Lỗi!";
+            }
+        }
+    </script>
+
+  
+  
+</body>
+</html>
